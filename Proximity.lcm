@@ -2,13 +2,19 @@
 
 package rover_msgs;
 
+struct nav_obstacle_return {
+    bool detected;
+    double bearing;
+    // double speed
+}
+/*
 struct name{
 	double depths[64]; 	//8x8 array of depths from Terabee
 	double sweepDistance[180]; //Distance from servo sweep, the angle is the index
 	bool detected; 		//States whether obstacle is present or not
 	double ultrasonics[3 or 5];	//Array of depths from the ultrasonic sensors
 }
-
+*/
 // from servo-sweep 
 // distancee 
 // angle (from Servo)
