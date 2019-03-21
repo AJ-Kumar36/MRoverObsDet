@@ -1,7 +1,11 @@
+import numpy as np
+import serial
+import crcmod.predefined
+import threading
+
 class Terabee(object):
 
     def __init__(self):
-        lcm = aiolcm.AsyncLCM()
 
         #Update this for when we have a config file maybe
         '''    
@@ -12,19 +16,19 @@ class Terabee(object):
 
 
         # Configure the serial connections (the parameters differs on the device you are connecting to)
-        self.port = serial.Serial(
+        self.terabee_port = serial.Serial(
             port="COM4",
             baudrate=115200,
             parity=serial.PARITY_NONE,
             stopbits=serial.STOPBITS_ONE,
             bytesize=serial.EIGHTBITS
         )
-        self.port.isOpen()
-        self.crc32 = crcmod.predefined.mkPredefinedCrcFun('crc-32-mpeg')
-        self.crc8 = crcmod.predefined.mkPredefinedCrcFun('crc-8')
-        self.serial_lock = threading.Lock()
+        self.terabee_port.isOpen()
+        self.terabee_port.crc32 = crcmod.predefined.mkPredefinedCrcFun('crc-32-mpeg')
+        self.terabee_port.crc8 = crcmod.predefined.mkPredefinedCrcFun('crc-8')
+        self.terabee_port.serial_lock = threading.Lock()
 
-        self.port.flushInput()
+        self.terabee_port.flushInput()
 
     def get_depth_array(self):
         '''
@@ -33,8 +37,8 @@ class Terabee(object):
         '''
         got_frame = False
         while not got_frame:
-            with self.serial_lock:
-                frame = self.port.readline()
+            with self.terabee_port.serial_lock:
+                frame = self.terabee_port.readline()
             if len(frame) == 269:
                 if frame[0] == 0x11 and self.crc_check(frame):  # Check for range frame header and crc
                     dec_out = []
@@ -62,7 +66,7 @@ class Terabee(object):
         crc_value |= (frame[index + 6] & 0x0F) << 4
         crc_value |= (frame[index + 7] & 0x0F)
         crc_value = crc_value & 0xFFFFFFFF
-        crc32 = self.crc32(frame[:index])
+        crc32 = self.terabee_port.crc32(frame[:index])
 
         if crc32 == crc_value:
             return True
@@ -71,17 +75,17 @@ class Terabee(object):
             return False
 
     def send_command(self, command):
-        with self.serial_lock:# This avoid concurrent writes/reads of serial
-            self.port.write(command)
-            ack = self.port.read(1)
+        with self.terabee_port.serial_lock:# This avoid concurrent writes/reads of serial
+            self.terabee_port.write(command)
+            ack = self.terabee_port.read(1)
             # This loop discards buffered frames until an ACK header is reached
             while ord(ack) != 20:
-                self.port.readline()
-                ack = self.port.read(1)
+                self.terabee_port.readline()
+                ack = self.terabee_port.read(1)
             else:
-                ack += self.port.read(3)
+                ack += self.terabee_port.read(3)
             # Check ACK crc8
-            crc8 = self.crc8(ack[:3])
+            crc8 = self.terabee_port.crc8(ack[:3])
             if crc8 == ack[3]:
                 # Check if ACK or NACK
                 if ack[2] == 0:
