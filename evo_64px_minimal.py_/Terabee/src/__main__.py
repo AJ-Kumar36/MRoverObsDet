@@ -5,27 +5,33 @@ import numpy as np
 #from rover_msgs import proximity_sensors
 import serial
 import Terabee
+import TFmini
 
 
 
 def main():
-    terabee = Terabee.Terabee()
-    terabee.start_sensor()
-    terabee.close_range()
+    #terabee = Terabee.Terabee()
+    #terabee.start_sensor()
+    #terabee.close_range()
+
+    tfmini = TFmini.TFMini()
 
     depth_array = []
+    tfmini_dist = 0
 
 
     while(True):
-        depth_array = terabee.get_depth_array()
+        #depth_array = terabee.get_depth_array()
+        tfmini_dist = tfmini.get_dist()
         #obs_msg = Terabee()
         #obs_msg.depths = depth_array
         #obs_msg.detected = detect_obstacle(depth_array) #ultrasonic, Sweep
         #lcm.publish('proximity_sensors', obs_msg.encode())
         try:        
-            print(depth_array)
+            #print(depth_array)
+            print(tfmini_dist)
         except KeyboardInterrupt:
-            terabee.stop_sensor()
+            #terabee.stop_sensor()
             break
         
 

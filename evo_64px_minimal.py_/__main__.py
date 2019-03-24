@@ -37,6 +37,17 @@ def main():
 def detect_obstacle(depth_array): #add ults, sweep
     detected = True #In life, there is always an obstacle in front of you,
     #even if you can't see it
+
+    # ultrasonic
+
+
+    # terabee
+
+
+    # Servo Sweep
+    # if object is i 70 - 110 deg range
+
+
     return detected
 
 
@@ -145,6 +156,15 @@ class Terabee(object):
     def fast_mode(self):
         if self.send_command(b'\x00\x21\x02\xB5'):
             print("Sensor in fast mode")
+
+
+class TFMini(object):
+    def __init__(self):
+        mini_serial = serial.Serial("COM3", 115200)
+
+    def get_dist(self):
+        input = self.mini_serial.readline().decode("utf-8")
+        return int(input[1])
         
 
 
