@@ -1,7 +1,7 @@
 import serial
 from time import sleep
 
-
+#class TFMini(object):
 def normalize_data(reading):  
     if reading > 3000:
         return "N/D"
@@ -25,28 +25,5 @@ while True:
         break
 
 
-"""import numpy as np
-import serial
-import threading
 
-class Ultrasonic(object):
-
-    def __init__(self):
-        self.portname = "/dev/tty.usbserial"
-        self.baudrate = 9600
-
-        self.port = serial.Serial(
-            port = self.portname,
-            baudrate = self.baudrate
-        )
-        self.port.isOpen()
-        #self.serial_lock = threading.lock()
-
-    def getData(self):
-        print(self.port.readline())
-
-if __name__ == "__main__":
-    u = Ultrasonic() 
-    for i in range(0,1000):
-        u.getData()"""
         
