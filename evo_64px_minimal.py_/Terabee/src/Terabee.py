@@ -112,3 +112,14 @@ class Terabee(object):
     def fast_mode(self):
         if self.send_command(b'\x00\x21\x02\xB5'):
             print("Sensor in fast mode")
+
+    def detected(self):
+        array = self.get_depth_array()
+        detect_count = 0
+        for i in range(0,7):
+            for j in range(0,7):
+                if array[i][j] < 400 and array[i][j] !=1:
+                    detect_count +=1
+        if detect_count < 32:
+            return False
+        return True
