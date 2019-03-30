@@ -1,3 +1,6 @@
+#include <ServoTimer2.h>
+
+
 /*
 Example code for Benewake TFMini time-of-flight distance sensor. 
 by Peter Jansen (December 11/2017)
@@ -35,6 +38,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 // Setup software serial port 
 SoftwareSerial mySerial(10, 11);      // Uno RX (TFMINI TX), Uno TX (TFMINI RX)
 TFMini tfmini;
+ServoTimer2 servo;
 
 void setup() {
   // Step 1: Initialize hardware serial port (serial debug port)
@@ -49,6 +53,8 @@ void setup() {
 
   // Step 3: Initialize the TF Mini sensor
   tfmini.begin(&mySerial);    
+
+  servo.attach(9);
 }
 
 
@@ -56,12 +62,31 @@ void loop() {
   // Take one TF Mini distance measurement
   uint16_t dist = tfmini.getDistance();
   uint16_t strength = tfmini.getRecentSignalStrength();
-
+  for(int i = 1000; i < 2000; i+=10){
+    dist = tfmini.getDistance();
+    servo.write(i);
+  
   // Display the measurement
-  Serial.println(dist); // distance in centimeters
+    Serial.println(dist); // distance in centimeters
 //  Serial.print(" cm      sigstr: ");
 //  Serial.println(strength);
 
   // Wait some short time before taking the next measurement
-  delay(25);  
+    delay(500);
+  }
+   for(int i = 2000; i >= 1000; i-=10){
+    dist = tfmini.getDistance();
+    servo.write(i);
+  
+  // Display the measurement
+    Serial.println(dist); // distance in centimeters
+//  Serial.print(" cm      sigstr: ");
+//  Serial.println(strength);
+
+  // Wait some short time before taking the next measurement
+    delay(500);
+  }
+
+
+  
 }

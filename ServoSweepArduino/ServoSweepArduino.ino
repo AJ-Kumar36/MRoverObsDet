@@ -28,9 +28,11 @@ boolean TFMini::begin(Stream* _streamPtr) {
 
 
 Servo myServo; // Creates a servo object for controlling the servo motor
+TFMini tfmini;
+
 void setup() {
-  pinMode(trigPin, OUTPUT); // Sets the trigPin as an Output
-  pinMode(echoPin, INPUT); // Sets the echoPin as an Input
+ // pinMode(trigPin, OUTPUT); // Sets the trigPin as an Output
+  //pinMode(echoPin, INPUT); // Sets the echoPin as an Input
   Serial.begin(9600);
   myServo.attach(12); // Defines on which pin is the servo motor attached
 }
@@ -54,19 +56,11 @@ void loop() {
   Serial.print(i);
   Serial.print(",");
   Serial.print(distance);
-  Serial.print(".");
+  Serial.println(".");
   }
 }
 // Function for calculating the distance measured by the Ultrasonic sensor
 int calculateDistance(){ 
-  
-  digitalWrite(trigPin, LOW); 
-  delayMicroseconds(2);
-  // Sets the trigPin on HIGH state for 10 micro seconds
-  digitalWrite(trigPin, HIGH); 
-  delayMicroseconds(10);
-  digitalWrite(trigPin, LOW);
-  duration = pulseIn(echoPin, HIGH); // Reads the echoPin, returns the sound wave travel time in microseconds
-  distance= duration*0.034/2;
-  return distance;
+  uint16_t dist = tfmini.getDistance();
+  return dist;
 }

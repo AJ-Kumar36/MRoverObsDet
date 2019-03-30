@@ -6,6 +6,7 @@ import numpy as np
 import serial
 import Terabee
 import TFmini
+import Ultrasonics
 
 
 
@@ -17,9 +18,11 @@ def main():
     #tfmini = TFmini.TFMini()
 
     depth_array = []
+    double_ults = Ultrasonics.Ultrasonics()
+    ults1, ults2 = double_ults.get_dist()
     #tfmini_dist = 0
 
-
+    counter = 0
     while(True):
         depth_array = terabee.get_depth_array()
         #tfmini_dist = tfmini.get_dist()
@@ -27,14 +30,30 @@ def main():
         #obs_msg.depths = depth_array
         #obs_msg.detected = detect_obstacle(depth_array) #ultrasonic, Sweep
         #lcm.publish('proximity_sensors', obs_msg.encode())
-        counter = 0
         try:
-            if counter%30==0:
-                if terabee.detected():
+            ults1, ults2 = double_ults.get_dist()
+            
+            if counter%15==0:
+                if double_ults.detected(ults1,ults2) and terabee.detected(): 
+                    print("Ults+Bee: Detected")
+                elif terabee.detected():
                     print("Terabee: Detected")
+                elif double_ults.detected(ults1,ults2):
+                    print("Ults: Detected")
                 else:
-                    print("None") 
+                    print("No objects found") 
+                    '''
+                if double_ults.detected(ults1, ults2):
+                    print("Detected")
+                    print(str(ults1) + " " + str(ults2))
+                else:
+                    print("Not Detected")
+                    print(str(ults1) + " " + str(ults2))
+                    '''
             counter+=1
+            
+            
+            
             #print(tfmini_dist)
         except KeyboardInterrupt:
             terabee.stop_sensor()

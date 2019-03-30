@@ -118,8 +118,8 @@ class Terabee(object):
         detect_count = 0
         for i in range(0,7):
             for j in range(0,7):
-                if array[i][j] < 400 and array[i][j] !=1:
+                if array[i][j] < 800 and array[i][j] !=1:
                     detect_count +=1
-        if detect_count < 32:
+        if detect_count < 25:
             return False
         return True
